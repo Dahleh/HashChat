@@ -229,9 +229,14 @@
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="iub-R5-Cii">
                                 <rect key="frame" x="0.0" y="123" width="375" height="429"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search Channels" id="wWZ-3f-f1O">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="56"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </searchBar>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="channelCell" id="g5K-vm-QMt" customClass="ChannelCell" customModule="teletubbies" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="84" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="g5K-vm-QMt" id="UbO-tX-JwN">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
@@ -278,6 +283,7 @@
                     </view>
                     <connections>
                         <outlet property="loginBtn" destination="hDI-e1-VJs" id="5Kg-0K-M1A"/>
+                        <outlet property="searchBar" destination="wWZ-3f-f1O" id="sZR-05-Kn3"/>
                         <outlet property="tableView" destination="iub-R5-Cii" id="bpA-E4-MPC"/>
                         <outlet property="userImg" destination="n86-Ou-xHh" id="DmR-a4-CuY"/>
                         <segue destination="H6m-92-zg4" kind="show" identifier="toLogin" id="f8B-hP-diS"/>
