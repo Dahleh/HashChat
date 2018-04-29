@@ -76,6 +76,8 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as? ChannelCell {
+            filteredChannels.sort(by: { $0.channelTitle < $1.channelTitle })
+            MessageService.instance.channels.sort(by: { $0.channelTitle < $1.channelTitle })
             if isSearching {
                 let channel = filteredChannels[indexPath.row]
                 cell.configureCell(channel: channel)
