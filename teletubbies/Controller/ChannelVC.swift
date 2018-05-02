@@ -17,10 +17,13 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     @IBOutlet var searchBar: UISearchBar!
     
     var filteredChannels = [Channel]()
+    //public var favChannels = [Channel]()
     var isSearching = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //MessageService.instance.favChannels = loadFav()
+        //print(favChannels,"after restart")
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
@@ -86,10 +89,23 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 let channel = MessageService.instance.channels[indexPath.row]
                 cell.configureCell(channel: channel)
                 return cell
+//                if MessageService.instance.favChannels.count > 0{
+//                    print(MessageService.instance.favChannels)
+//                    let channel = MessageService.instance.favChannels[indexPath.row]
+//                    print(channel)
+//                    cell.configureCell(channel: channel)
+//                    return cell
+//                }else{
+//                    let channel = MessageService.instance.channels[indexPath.row]
+//                    cell.configureCell(channel: channel)
+//                    return cell
+//                }
             }
+            
         }else{
             return UITableViewCell()
         }
+        
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -97,20 +113,22 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         if isSearching {
             return filteredChannels.count
         }
+//        if MessageService.instance.favChannels.count > 0 {
+//            return MessageService.instance.favChannels.count
+//        }
         
         return MessageService.instance.channels.count
     }
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if searchBar.text == nil || searchBar.text == ""{
-        let channel = MessageService.instance.channels[indexPath.row]
-            MessageService.instance.selectedChannel = channel
-            if MessageService.instance.unReadChannels.count > 0{
-                MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
-            }
+                let channel = MessageService.instance.channels[indexPath.row]
+                MessageService.instance.selectedChannel = channel
+                if MessageService.instance.unReadChannels.count > 0{
+                    MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
+                }
         }else{
             let channel = filteredChannels[indexPath.row]
             MessageService.instance.selectedChannel = channel
@@ -118,12 +136,16 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
             }
         }
-        
         let index = IndexPath(row: indexPath.row, section: 0)
         tableView.reloadRows(at: [index], with: .none)
         tableView.selectRow(at: index, animated: false, scrollPosition: .none)
         NotificationCenter.default.post(name: NOTIF_CHANNELS_SELECTED, object: nil)
         self.revealViewController().revealToggle(animated: true)
+        //MessageService.instance.favChannels.append(MessageService.instance.selectedChannel!)
+        //print("Added")
+        //print(MessageService.instance.favChannels)
+        //saveFav()
+        tableView.reloadData()
     }
     
     @IBAction func addChannelPressed(_ sender: Any) {
@@ -145,4 +167,33 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             tableView.reloadData()
         }
     }
+//    func saveFav() {
+//        let favData = NSKeyedArchiver.archivedData(withRootObject: favChannels)
+//        UserDefaults.standard.set(favData, forKey: "favChannels")
+//    }
+//    func loadFav() {
+//        guard let favData = UserDefaults.standard.object(forKey: "favChannels") as? NSData else {
+//            print("'fav' not found in UserDefaults")
+//            return
+//        }
+//
+//        guard let favChannelsArray = NSKeyedUnarchiver.unarchiveObject(with: favData as Data) as? [Channel] else {
+//            print("Could not unarchive from placesData")
+//            return
+//        }
+//
+//        favChannels = favChannelsArray
+//
+//    }
+//    public func saveFav(){
+//        let favData = try! JSONEncoder().encode(MessageService.instance.favChannels)
+//        UserDefaults.standard.set(favData, forKey: "favChannels")
+//        UserDefaults.standard.synchronize()
+//    }
+//
+//    public func loadFav() -> [Channel]{
+//        let favData = UserDefaults.standard.data(forKey: "favChannels")
+//        let favChannelsArray = try! JSONDecoder().decode([Channel].self, from: favData!)
+//        return favChannelsArray
+//    }
 }

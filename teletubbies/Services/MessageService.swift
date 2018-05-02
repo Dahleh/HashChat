@@ -17,7 +17,6 @@ class MessageService {
     var channels = [Channel]()
     var selectedChannel: Channel?
     
-    
     var messages = [Message]()
     var unReadChannels = [String]()
     
@@ -64,7 +63,6 @@ class MessageService {
                         let message = Message(message: messageBody, userName: userName, channelId: channelId, userAvatar: userAvatar, userAvatarColor: userAvatarColor, id: id, timeStamp: timeStamp)
                         self.messages.append(message)
                     }
-                    print(self.messages)
                     completion(true)
                 }
             }else{
@@ -77,4 +75,5 @@ class MessageService {
     func clearMessages(){
         messages.removeAll()
     }
+    
 }

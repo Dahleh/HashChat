@@ -252,10 +252,20 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vy9-4D-XNA">
+                                                    <rect key="frame" x="265" y="2" width="40" height="40"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="40" id="SXL-xD-5Kz"/>
+                                                        <constraint firstAttribute="height" constant="40" id="oP7-aI-NEa"/>
+                                                    </constraints>
+                                                    <state key="normal" image="fav_star"/>
+                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="odT-ER-CBR" firstAttribute="centerY" secondItem="UbO-tX-JwN" secondAttribute="centerY" id="0bO-X4-xuK"/>
+                                                <constraint firstItem="Vy9-4D-XNA" firstAttribute="centerY" secondItem="UbO-tX-JwN" secondAttribute="centerY" id="EmT-7z-USw"/>
                                                 <constraint firstItem="odT-ER-CBR" firstAttribute="leading" secondItem="UbO-tX-JwN" secondAttribute="leadingMargin" constant="20" id="fk6-Xp-Beg"/>
+                                                <constraint firstAttribute="trailing" secondItem="Vy9-4D-XNA" secondAttribute="trailing" constant="70" id="lrd-T2-FGI"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -706,6 +716,7 @@
     <resources>
         <image name="addChannelButton" width="22" height="22"/>
         <image name="closeButton" width="28" height="28"/>
+        <image name="fav_star" width="25" height="23"/>
         <image name="menuProfileIcon" width="99" height="99"/>
         <image name="profileDefault" width="192" height="192"/>
         <image name="send" width="30" height="30"/>
