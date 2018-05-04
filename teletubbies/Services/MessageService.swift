@@ -16,6 +16,7 @@ class MessageService {
     
     var channels = [Channel]()
     var selectedChannel: Channel?
+    var favChannels = [Channel]()
     
     var messages = [Message]()
     var unReadChannels = [String]()
@@ -29,7 +30,7 @@ class MessageService {
                         let name = item["name"].stringValue
                         let channelDescription = item["description"].stringValue
                         let id = item["_id"].stringValue
-                        let channel = Channel(channelTitle: name, channelDescription: channelDescription, id: id)
+                        let channel = Channel(channelTitle: name, channelDescription: channelDescription, id: id, isFav: false)
                         self.channels.append(channel)
                     }
                     NotificationCenter.default.post(name: NOTIF_CHANNELS_LOADED, object: nil)

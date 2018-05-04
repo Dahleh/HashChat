@@ -12,5 +12,5 @@ struct Channel: Codable {
     public private(set) var channelTitle: String!
     public private(set) var channelDescription: String!
     public private(set) var id: String!
-    
+    var isFav: Bool!
     }

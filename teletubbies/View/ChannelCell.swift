@@ -8,14 +8,21 @@
 
 import UIKit
 
+enum ChannelType{
+    case all
+    case fav
+}
+
 class ChannelCell: UITableViewCell {
 
+    
+    var link: ChannelVC?
+    
+    @IBOutlet var favBtn: UIButton!
     @IBOutlet var channelName: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-    
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         if selected {
@@ -36,4 +43,10 @@ class ChannelCell: UITableViewCell {
             }
         }
     }
+    
+    @IBAction func favBtn(_ sender: Any) {
+        print("Marking as favorite")
+        link?.addToFav(cell: self)
+    }
+    
 }

@@ -15,15 +15,16 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     @IBAction func prepareForUnwind(segue: UIStoryboardSegue){}
     @IBOutlet var userImg: RoundedImage!
     @IBOutlet var searchBar: UISearchBar!
+    @IBOutlet var segmentControl: UISegmentedControl!
     
     var filteredChannels = [Channel]()
-    //public var favChannels = [Channel]()
+    public var favChannelsRemove = [Channel]()
     var isSearching = false
+    var channelType = ChannelType.all
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //MessageService.instance.favChannels = loadFav()
-        //print(favChannels,"after restart")
+        MessageService.instance.favChannels = loadFav()
         tableView.delegate = self
         tableView.dataSource = self
         searchBar.delegate = self
@@ -79,27 +80,26 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as? ChannelCell {
+            cell.link = self
             filteredChannels.sort(by: { $0.channelTitle < $1.channelTitle })
             MessageService.instance.channels.sort(by: { $0.channelTitle < $1.channelTitle })
-            if isSearching {
-                let channel = filteredChannels[indexPath.row]
-                cell.configureCell(channel: channel)
-                return cell
+            if channelType == .all{
+                if isSearching {
+                    let channel = filteredChannels[indexPath.row]
+                    cell.configureCell(channel: channel)
+                    return cell
+                }else{
+                    let channel = MessageService.instance.channels[indexPath.row]
+                    cell.configureCell(channel: channel)
+                    return cell
+                }
             }else{
-                let channel = MessageService.instance.channels[indexPath.row]
-                cell.configureCell(channel: channel)
-                return cell
-//                if MessageService.instance.favChannels.count > 0{
-//                    print(MessageService.instance.favChannels)
-//                    let channel = MessageService.instance.favChannels[indexPath.row]
-//                    print(channel)
-//                    cell.configureCell(channel: channel)
-//                    return cell
-//                }else{
-//                    let channel = MessageService.instance.channels[indexPath.row]
-//                    cell.configureCell(channel: channel)
-//                    return cell
-//                }
+                                    let channel = MessageService.instance.favChannels[indexPath.row]
+                if channel.isFav{
+                    cell.configureCell(channel: channel)
+                }
+                
+                                    return cell
             }
             
         }else{
@@ -113,9 +113,9 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         if isSearching {
             return filteredChannels.count
         }
-//        if MessageService.instance.favChannels.count > 0 {
-//            return MessageService.instance.favChannels.count
-//        }
+        if channelType == .fav {
+            return MessageService.instance.favChannels.count
+        }
         
         return MessageService.instance.channels.count
     }
@@ -123,12 +123,26 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
         return 1
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if channelType == .all {
+            selectRow(channelArray: MessageService.instance.channels, indexPath: indexPath)
+        }else{
+            selectRow(channelArray: MessageService.instance.favChannels, indexPath: indexPath)
+        }
+        let index = IndexPath(row: indexPath.row, section: 0)
+        tableView.reloadRows(at: [index], with: .none)
+        tableView.selectRow(at: index, animated: false, scrollPosition: .none)
+        NotificationCenter.default.post(name: NOTIF_CHANNELS_SELECTED, object: nil)
+        self.revealViewController().revealToggle(animated: true)
+
+    }
+    
+    func selectRow(channelArray: [Channel], indexPath: IndexPath){
         if searchBar.text == nil || searchBar.text == ""{
-                let channel = MessageService.instance.channels[indexPath.row]
-                MessageService.instance.selectedChannel = channel
-                if MessageService.instance.unReadChannels.count > 0{
-                    MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
-                }
+            let channel = channelArray[indexPath.row]
+            MessageService.instance.selectedChannel = channel
+            if MessageService.instance.unReadChannels.count > 0{
+                MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
+            }
         }else{
             let channel = filteredChannels[indexPath.row]
             MessageService.instance.selectedChannel = channel
@@ -136,15 +150,53 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
                 MessageService.instance.unReadChannels = MessageService.instance.unReadChannels.filter{$0 != channel.id}
             }
         }
-        let index = IndexPath(row: indexPath.row, section: 0)
-        tableView.reloadRows(at: [index], with: .none)
-        tableView.selectRow(at: index, animated: false, scrollPosition: .none)
-        NotificationCenter.default.post(name: NOTIF_CHANNELS_SELECTED, object: nil)
-        self.revealViewController().revealToggle(animated: true)
-        //MessageService.instance.favChannels.append(MessageService.instance.selectedChannel!)
-        //print("Added")
-        //print(MessageService.instance.favChannels)
-        //saveFav()
+    }
+    
+    func addToFav(cell: UITableViewCell){
+        print("insideController")
+        guard let indexPathTapped = tableView.indexPath(for: cell) else { return }
+        if channelType == .all {
+            if isSearching{
+                if filteredChannels[indexPathTapped.row].isFav == false{
+                    filteredChannels[indexPathTapped.row].isFav = true
+                    MessageService.instance.favChannels.append(filteredChannels[indexPathTapped.row])
+                    saveFav()
+                    print("Added")
+                }else{
+                    filteredChannels[indexPathTapped.row].isFav = false
+                    print(MessageService.instance.favChannels.count)
+
+                    MessageService.instance.favChannels.remove(at: indexPathTapped.row)
+                    saveFav()
+                    print("Removed")
+                }
+                
+            }else{
+                if MessageService.instance.channels[indexPathTapped.row].isFav == false{
+                    MessageService.instance.channels[indexPathTapped.row].isFav = true
+                    MessageService.instance.favChannels.append(MessageService.instance.channels[indexPathTapped.row])
+                    print("Added")
+                    saveFav()
+                }else{
+                    MessageService.instance.channels[indexPathTapped.row].isFav = false
+                    print(MessageService.instance.channels[indexPathTapped.row].isFav)
+                    MessageService.instance.favChannels.remove(at: indexPathTapped.row)
+                    print("Removed")
+                    saveFav()
+                }
+                
+            }
+
+            
+        }else{
+                print(MessageService.instance.favChannels[indexPathTapped.row])
+                MessageService.instance.favChannels[indexPathTapped.row].isFav = false
+            print(MessageService.instance.channels[indexPathTapped.row].isFav)
+                MessageService.instance.favChannels.remove(at: indexPathTapped.row)
+                saveFav()
+                print("removed")
+
+        }
         tableView.reloadData()
     }
     
@@ -167,33 +219,29 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource, U
             tableView.reloadData()
         }
     }
-//    func saveFav() {
-//        let favData = NSKeyedArchiver.archivedData(withRootObject: favChannels)
-//        UserDefaults.standard.set(favData, forKey: "favChannels")
-//    }
-//    func loadFav() {
-//        guard let favData = UserDefaults.standard.object(forKey: "favChannels") as? NSData else {
-//            print("'fav' not found in UserDefaults")
-//            return
-//        }
-//
-//        guard let favChannelsArray = NSKeyedUnarchiver.unarchiveObject(with: favData as Data) as? [Channel] else {
-//            print("Could not unarchive from placesData")
-//            return
-//        }
-//
-//        favChannels = favChannelsArray
-//
-//    }
-//    public func saveFav(){
-//        let favData = try! JSONEncoder().encode(MessageService.instance.favChannels)
-//        UserDefaults.standard.set(favData, forKey: "favChannels")
-//        UserDefaults.standard.synchronize()
-//    }
-//
-//    public func loadFav() -> [Channel]{
-//        let favData = UserDefaults.standard.data(forKey: "favChannels")
-//        let favChannelsArray = try! JSONDecoder().decode([Channel].self, from: favData!)
-//        return favChannelsArray
-//    }
+    public func saveFav(){
+        let favData = try! JSONEncoder().encode(MessageService.instance.favChannels)
+        UserDefaults.standard.set(favData, forKey: "favChannels")
+        UserDefaults.standard.synchronize()
+    }
+
+    public func loadFav() -> [Channel]{
+        if let favData = UserDefaults.standard.data(forKey: "favChannels"){
+            let favChannelsArray = try! JSONDecoder().decode([Channel].self, from: favData)
+            return favChannelsArray
+        }else{
+            return [Channel]()
+        }
+        
+    }
+    
+    @IBAction func segmentChanged(_ sender: Any) {
+        if segmentControl.selectedSegmentIndex == 0 {
+            channelType = .all
+        }else{
+            channelType = .fav
+        }
+        tableView.reloadData()
+    }
+    
 }

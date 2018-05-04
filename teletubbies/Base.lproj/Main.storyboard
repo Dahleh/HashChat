@@ -259,6 +259,9 @@
                                                         <constraint firstAttribute="height" constant="40" id="oP7-aI-NEa"/>
                                                     </constraints>
                                                     <state key="normal" image="fav_star"/>
+                                                    <connections>
+                                                        <action selector="favBtn:" destination="g5K-vm-QMt" eventType="touchUpInside" id="tvr-Xf-qCd"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
@@ -271,10 +274,22 @@
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <connections>
                                             <outlet property="channelName" destination="odT-ER-CBR" id="HeO-Wx-KFK"/>
+                                            <outlet property="favBtn" destination="Vy9-4D-XNA" id="k9X-El-7gl"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="3cf-aU-kN3">
+                                <rect key="frame" x="101" y="78" width="121" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <segments>
+                                    <segment title="All"/>
+                                    <segment title="Fav"/>
+                                </segments>
+                                <connections>
+                                    <action selector="segmentChanged:" destination="Ihp-7A-MrH" eventType="valueChanged" id="XAE-YJ-K0G"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
@@ -298,6 +313,7 @@
                     <connections>
                         <outlet property="loginBtn" destination="hDI-e1-VJs" id="5Kg-0K-M1A"/>
                         <outlet property="searchBar" destination="wWZ-3f-f1O" id="sZR-05-Kn3"/>
+                        <outlet property="segmentControl" destination="3cf-aU-kN3" id="m8a-oy-uGf"/>
                         <outlet property="tableView" destination="iub-R5-Cii" id="bpA-E4-MPC"/>
                         <outlet property="userImg" destination="n86-Ou-xHh" id="DmR-a4-CuY"/>
                         <segue destination="H6m-92-zg4" kind="show" identifier="toLogin" id="f8B-hP-diS"/>
